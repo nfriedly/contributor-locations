@@ -2,6 +2,20 @@ import { Octokit } from "https://esm.sh/octokit";
 
 const $ = document.querySelector.bind(document);
 
+const query = location.search.substr(1)
+                .split('&')
+                .map(s=>s.split('='))
+                .reduce((acc,[key,value]) => {
+                  acc[key]=decodeURIComponent(value); 
+                  return acc
+                }, {});
+if (query.repo_url) {
+  $('#repo_url').value = query.repo_url;
+}
+if (query.token) {
+  $('#token').value = query.token;
+}
+
 $('form').onsubmit = async (e) => {
 	e.preventDefault();
 
