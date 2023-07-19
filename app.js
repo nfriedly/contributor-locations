@@ -1,8 +1,10 @@
 import { Octokit } from "https://esm.sh/octokit";
 
 const $ = document.querySelector.bind(document);
+
 $('form').onsubmit = async (e) => {
 	e.preventDefault();
+
   const {owner, repo} = parseUrl($('#repo_url').value);
   if (!owner || !repo) {
   	return alert("Unable to parse GitHub repository URL");
@@ -11,6 +13,7 @@ $('form').onsubmit = async (e) => {
   
   $('#title').textContent = `${repo} contributor locations`;
   $('#summary').textContent = 'Loading contributors...';
+  $('#locations').innerHTML= '';
   
   // todo: progress bar
   
@@ -18,7 +21,7 @@ $('form').onsubmit = async (e) => {
   	handleContributorLocations(await getContributorsByLocation(owner, repo, token, onProgress))
   } catch (er) {
   	alert(er)
-		console.error(er.stack); 
+		console.error(er); 
     //$('#error').textContent = er.message || er;
   }
 }
