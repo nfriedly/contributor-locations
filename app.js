@@ -24,6 +24,7 @@ $('form').onsubmit = async (e) => {
   if (!owner || !repo) {
     return alert("Unable to parse GitHub repository URL");
   }
+  // todo: add an option to save the token to localStorage
   const token = $('#token').value
 
   $('#results').style.display = '';
@@ -73,10 +74,11 @@ $('form').onsubmit = async (e) => {
 
   cl.on('contributor-location', (data) => {
     const locationLi = findOrCreateLi(locations, 'location', data);
-    locationLi.title = locationLi.contributors.join(', ');
+    locationLi.title = `${locationLi.dataset.country || 'Unrecognized location' } - ${locationLi.contributors.join(', ')}`;
 
     if (data.country) {
       const countryLi = findOrCreateLi(countries, 'country', data);
+      // todo: group these by location
       countryLi.title = countryLi.locations.map((loc, i) => `${loc} (${countryLi.contributors[i]})`).join(', ');
     }
   })

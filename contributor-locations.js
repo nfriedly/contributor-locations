@@ -6,7 +6,18 @@ export class ContributorLocations extends EventTarget {
     oktokit;
   
     usersByLocation = {};
-    countriesByLocation = {};
+    countriesByLocation = {
+      // somewhat unbelieveably, the gennames API doesn't recognize either of these
+      'USA': 'United States',
+      'United States': 'United States',
+      // these get incorrect results
+      'Cambridge, UK': 'United Kingdom', // United States !?
+      '::1': undefined, // Iran
+      'remote': undefined, // U.S. Outlying Islands
+      'On the run': undefined, // Canada
+      'Global': undefined, // UAE
+      'nomad': undefined, // Papua New Guinea
+    };
   
     numContributors = 0;
     numWithLocation = 0;
@@ -119,7 +130,12 @@ export class ContributorLocations extends EventTarget {
         const response = await fetch(url);
         const results = await response.json();
         //console.log(loc, '=>', results);
-        this.countriesByLocation[loc] = results?.geonames?.[0]?.countryName;
+        const country = results?.geonames?.[0]?.countryName;
+        this.countriesByLocation[loc] = country;
+        if (country && country !== loc) {
+          // also save the exact country name, since that's an easy way to prevent one or more API lookups later
+          this[country] = country;
+        }
       }
       return this.countriesByLocation[loc];
     }
