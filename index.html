@@ -17,12 +17,16 @@
         width: 100%;
       }
       /* display the count in CSS so that it won't be grabbed by copy-paste */
-      #locations>li:after {
+      .show-count>li:after {
         content: ' (' attr(data-count) ')'
       }
       /* don't display the count when it's only 1 */
-      #locations>li[data-count="1"]:after {
+      .show-count>li[data-count="1"]:after {
           content: ''
+      }
+      /* mark locations that cannot be mapped to a country */
+      #locations>li[data-unknown-country]:before {
+        content: '⚠️ '
       }
     </style>
   </head>
@@ -49,13 +53,26 @@
       <section id="results" style="display:none">
         <hr>
         <h2 id="title"></h2>
-        <p id="summary"></p>
-
+        <div class="row align-items-start">
+          <div class="col">
+            <h3>Summary</h3>
+            <!-- todo: make this a bulleted list also -->
+            <p id="summary"></p>
+          </div>
+          <div class="col">
+            <h3>Locations</h3>
+            <ul id="locations" class="show-count">
+            </ul>
+          </div>
+          <div class="col">
+            <h3>Countries</h3>
+            <ul id="countries" class="show-count">
+            </ul>
+          </div>
+        </div>
+      
         <!-- todo: add a map -->
 
-        <!-- todo: offer normalized locations in addition to raw values -->
-        <ul id="locations">
-        </ul>
       </section>
 
       <footer>

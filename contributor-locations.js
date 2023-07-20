@@ -5,7 +5,8 @@ export class ContributorLocations extends EventTarget {
     repo;
     oktokit;
   
-    locations = {};
+    usersByLocation = {};
+    countriesByLocation = {};
   
     numContributors = 0;
     numWithLocation = 0;
@@ -45,6 +46,8 @@ export class ContributorLocations extends EventTarget {
       this.emit('done');
     }
   
+    // todo: look into the GraphQL API to see if we can get what we need in a smaller number of queries
+    // https://docs.github.com/en/graphql
     async getContributors() {
       return this.octokit.paginate('GET /repos/{owner}/{repo}/contributors', {
         owner: this.owner,
@@ -84,25 +87,40 @@ export class ContributorLocations extends EventTarget {
         const response = await this.octokit.request(contributor.url);
         this.numContributorsLoaded++;
         this.rateLimitRemaining = response.headers['x-ratelimit-remaining'];
-        this.processUser(response.data);
+        // todo: fetch the locations concurrently with the users
+        await this.processUser(response.data);
       } catch(er) {
         console.error('error loading contributor data: ', er);
         this.numContributorsFailed++;
       }
     }
   
-    processUser(user) {
+    async processUser(user) {
       if (user.type === 'Bot' || user.login === 'greenkeeperio-bot') {
         this.numBots++;
       } else if (user.location) {
         this.numWithLocation++;
         const location = user.location;
-        const users = this.locations[location] = locations[location] || [];
+        const users = this.usersByLocation[location] = locations[location] || [];
         users.push(user.login);
-        // todo: add normalized country
-        this.emit('contributor-location', {location, contributor: user.login});
+        const country = await(this.getCountry(location));
+        this.emit('contributor-location', {location, contributor: user.login, country});
       } else {
         this.numNoLocation++;
       }
+    }
+
+    async getCountry(loc) {
+      // note: using hasOwnProperty check so that we don't repeatedly look up locations for which there is no match
+      // (it will return true even if the value is set to undefined)
+      if (!this.countriesByLocation.hasOwnProperty(loc)) {
+        loc = loc.replace(/The Netherlands/i, 'Netherlands'); // for some reason, the "The" throws off the geonames API sometimes
+        const url = `https://secure.geonames.org/search?q=${encodeURIComponent(loc)}&username=nfriedly&maxRows=1&type=json`; //&callback=handleGeoNames if they don't do CORS
+        const response = await fetch(url);
+        const results = await response.json();
+        //console.log(loc, '=>', results);
+        this.countriesByLocation[loc] = results?.geonames?.[0]?.countryName;
+      }
+      return this.countriesByLocation[loc];
     }
   }
