@@ -28,11 +28,12 @@ function resetProgress() {
   setProgress(0);
 }
 function progressStalled() {
-  progressInner.className = 'progress-bar progress-bar-striped progress-bar-animatedcd bg-warning';
+  progressInner.className = 'progress-bar progress-bar-striped bg-warning';
 }
 function progressComplete() {
   setProgress(100);
   progressOuter.className = "progress hidden";
+  progressInner.className = 'progress-bar progress-bar-striped progress-bar-animated bg-success';
 }
 
 $('form').onsubmit = async (e) => {
