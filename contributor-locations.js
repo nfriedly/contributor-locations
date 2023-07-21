@@ -139,4 +139,15 @@ export class ContributorLocations extends EventTarget {
       }
       return this.countriesByLocation[loc];
     }
+
+    percentComplete() {
+      if (this.numContributors <= 0) {
+        return 0;
+      }
+      return (
+        (this.numContributorsLoaded + this.numContributorsFailed + this.numBots)
+        / this.numContributors
+        * 100
+      );
+    }
   }

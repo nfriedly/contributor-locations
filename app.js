@@ -16,6 +16,25 @@ function parseUrl(url) {
   return match?.groups || {};
 }
 
+const progressOuter = $('#progress-outer');
+const progressInner = $('#progress-inner');
+function setProgress(percent) {
+  progressOuter.setAttribute("aria-progressnow", percent);
+  progressInner.style.width = `${percent}%`;
+}
+function resetProgress() {
+  progressOuter.className = "progress";
+  progressInner.className = 'progress-bar progress-bar-striped progress-bar-animated bg-info';
+  setProgress(0);
+}
+function progressStalled() {
+  progressInner.className = 'progress-bar progress-bar-striped progress-bar-animatedcd bg-warning';
+}
+function progressComplete() {
+  setProgress(100);
+  progressOuter.className = "progress hidden";
+}
+
 $('form').onsubmit = async (e) => {
   e.preventDefault();
 
@@ -36,6 +55,7 @@ $('form').onsubmit = async (e) => {
   $('#summary').textContent = 'Loading contributors...';
   locations.innerHTML = ''; // reset in case it was previously called
   countries.innerHTML = '';
+  resetProgress();
 
   // todo: progress bar
   const cl = new ContributorLocations(owner, repo, token);
@@ -81,6 +101,7 @@ $('form').onsubmit = async (e) => {
       // todo: group these by location
       countryLi.title = countryLi.locations.map((loc, i) => `${loc} (${countryLi.contributors[i]})`).join(', ');
     }
+    setProgress(cl.percentComplete());
   })
 
   function updateSummary(isRateLimited) {
@@ -97,6 +118,7 @@ $('form').onsubmit = async (e) => {
       ${numNoLocation} ${plural(numBots, 'has', 'have')} no location set, 
       and ${numBots} ${plural(numBots, 'is a bot', 'are bots')}.
       (${rateLimitRemaining} requests remaining.)`;
+    isRateLimited ? progressStalled() : progressComplete();
   }
 
   cl.on('ratelimited', () => updateSummary(true));

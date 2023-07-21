@@ -28,6 +28,8 @@
       #locations>li[data-unknown-country]:before {
         content: '⚠️ '
       }
+      /* todo: animation*/
+      .progress.hidden { visibility: hidden; }
     </style>
   </head>
 
@@ -53,6 +55,9 @@
       <section id="results" style="display:none">
         <hr>
         <h2 id="title"></h2>
+        <div id="progress-outer" class="progress" role="progressbar" aria-label="Progress of finding user locations" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+          <div id="progress-inner" class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 0%"></div>
+        </div>
         <div class="row align-items-start">
           <div class="col">
             <h3>Summary</h3>
