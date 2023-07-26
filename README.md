@@ -13,6 +13,5 @@ Todo:
 * More color
 * Logo & favicon
 * Make the summary easier to read
-* Link to repo
 * Add a way to report bad country matches?
 * Offer to store token in localStorage
