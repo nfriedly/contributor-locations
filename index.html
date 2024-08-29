@@ -23,12 +23,22 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', upd
     </script>
     <style>
       /* display the count in CSS so that it won't be grabbed by copy-paste */
-      .show-count>li:after {
+      [data-count]:after {
         content: ' (' attr(data-count) ')'
       }
       /* don't display the count when it's only 1 */
-      .show-count>li[data-count="1"]:after {
-          content: ''
+      [data-count="1"]:after {
+        content: ''
+      }
+
+      .individual-list {
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+      }
+      :has(#show-individuals:checked) ~ div .individual-list {
+        max-height: 1000px;
+        transition: max-height 1s ease-in-out;
       }
       /* mark locations that cannot be mapped to a country */
       #locations>li[data-unknown-country]:before {
@@ -69,20 +79,21 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', upd
         <div id="progress-outer" class="progress" role="progressbar" aria-label="Progress of finding user locations" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
           <div id="progress-inner" class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 0%"></div>
         </div>
-        <div class="row align-items-start">
+        <div class="row align-items-start results">
           <div class="col-sm-4">
             <h3>Summary</h3>
             <!-- todo: make this a bulleted list also -->
             <p id="summary"></p>
+            <label for="show-individuals" class="form-label"><input name="show-individuals" id="show-individuals" type="checkbox" /> Show indidual contributors</label>
           </div>
           <div class="col-sm-4">
             <h3>Locations</h3>
-            <ul id="locations" class="show-count">
+            <ul id="locations" class="location-list">
             </ul>
           </div>
           <div class="col-sm-4">
             <h3>Countries</h3>
-            <ul id="countries" class="show-count">
+            <ul id="countries" class="location-list">
             </ul>
           </div>
         </div>

@@ -61,7 +61,6 @@ $('form').onsubmit = async (e) => {
   countries.innerHTML = '';
   resetProgress();
 
-  // todo: progress bar
   const cl = new ContributorLocations(owner, repo, token);
 
   cl.on('totalContributors', numContributors =>
@@ -77,7 +76,10 @@ $('form').onsubmit = async (e) => {
       isNew = true;
       li = document.createElement('li');
       li.id = id;
-      li.textContent = data[type];
+      const locName = document.createElement('span');
+      locName.textContent = data[type]
+      li.appendChild(locName);
+      li.locName = locName;
       li.contributors = [];
       li.locations = [];
       if (country) {
@@ -86,13 +88,23 @@ $('form').onsubmit = async (e) => {
         li.dataset.unknownCountry = 'true';
       }
       parent.appendChild(li)
+      const individuals = document.createElement('ul');
+      individuals.className = 'individual-list'
+      li.appendChild(individuals);
+      li.individuals = individuals;
     }
     li.contributors.push(contributor)
     li.locations.push(location);
-    li.dataset.count = li.contributors.length;
+    li.locName.dataset.count = li.contributors.length;
     if (li.dataset.country !== country) {
       console.warn('country mismatch for location', {id, locations: li.locations, firstCountry: li.dataset.country, secondCountry: country});
     }
+    const individual = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = `https://github.com/${contributor}`
+    a.textContent = contributor;
+    individual.appendChild(a);
+    li.individuals.appendChild(individual);
     return li;
   }
 

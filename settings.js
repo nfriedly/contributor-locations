@@ -1,6 +1,6 @@
-export function initSettings() {
-    const $ = document.querySelector.bind(document);
+const $ = document.querySelector.bind(document);
 
+function initToken() {
     const $token = $('#token');
     const $saveToken = $('#save-token');
     
@@ -22,5 +22,19 @@ export function initSettings() {
     
     $token.addEventListener('change', onSettingsChange);
     $saveToken.addEventListener('change', onSettingsChange);
+
 }
 
+function initShowIndividuals() {
+    const $showIndividuals = $('#show-individuals');
+    if (localStorage.getItem('show-individuals') == '1') {
+        $showIndividuals.checked = true;
+    }
+    $showIndividuals.addEventListener('change', () => localStorage.setItem('show-individuals', $showIndividuals.checked ? '1' : '0'));
+
+}
+
+export function initSettings() {
+    initToken();
+    initShowIndividuals();
+}
