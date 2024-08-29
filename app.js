@@ -130,7 +130,7 @@ $('form').onsubmit = async (e) => {
       ${isRateLimited ? `Rate limiting prevented loading data for all, but of the ${numContributorsLoaded} loaded, ` : ''}
       ${numWithLocation} ${plural(numWithLocation, 'is', 'are')} from ${numLocations} specified location${plural(numLocations)}
       which were mapped to ${numCountries} countrie${plural(numCountries)}
-      (${numUnmappableLocations ? '⚠️ ': ''}${numUnmappableLocations} location${plural(numUnmappableLocations)} were unable to be mapped to a country), 
+      (${numUnmappableLocations ? '⚠️ ': ''}${numUnmappableLocations} location${plural(numUnmappableLocations)} ${plural(numUnmappableLocations, 'was', 'were')} unable to be mapped to a country), 
       ${numNoLocation} ${plural(numBots, 'has', 'have')} no location set, 
       and ${numBots} ${plural(numBots, 'is a bot', 'are bots')}.
       (${rateLimitRemaining} requests remaining.)`;
