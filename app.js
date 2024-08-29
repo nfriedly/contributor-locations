@@ -1,4 +1,7 @@
 import { ContributorLocations } from "./contributor-locations.js"
+import { initSettings } from "./settings.js"
+
+initSettings();
 
 const $ = document.querySelector.bind(document);
 
